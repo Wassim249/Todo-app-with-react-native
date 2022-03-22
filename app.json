@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "todo-tp",
+    "slug": "todo-tp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

@@ -1,9 +1,25 @@
-import { StyleSheet, Text, TouchableOpacity, Alert, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Alert,
+  View,
+  TextInput,
+} from "react-native";
 import React, { useState } from "react";
 import Checkbox from "expo-checkbox";
+import EditTodo from "./EditTodo";
 
-const Todo = ({ id, title, isCompleted, handleCheck, handleDelete }) => {
+const Todo = ({
+  id,
+  title,
+  isCompleted,
+  handleCheck,
+  handleDelete,
+  handleEdit,
+}) => {
   const [checked, setChecked] = useState(isCompleted);
+  const [pressed, setPressed] = useState(false);
 
   return (
     <View style={styles.todoContainer}>
@@ -33,9 +49,22 @@ const Todo = ({ id, title, isCompleted, handleCheck, handleDelete }) => {
             },
           ]);
         }}
+        onPress={() => {
+          setPressed(true);
+        }}
         style={{ ...styles.container, ...styles.textContainer }}
       >
-        <Text style={styles.title}>{title}</Text>
+        {pressed ? (
+          <EditTodo
+            oldTitle={title}
+            pressed={pressed}
+            setPressed={setPressed}
+            handleEdit={handleEdit}
+            id={id}
+          />
+        ) : (
+          <Text style={styles.title}>{title}</Text>
+        )}
       </TouchableOpacity>
     </View>
   );

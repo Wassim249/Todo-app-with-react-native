@@ -16,7 +16,6 @@ export default function App() {
 
       if (localTodos && localTodos.length != 0) setTodos(localTodos);
       else {
-        console.log("json");
         const response = await axios.get(API_URL);
         setTodos(response.data.slice(0, 40).sort((t1, t2) => t1 < t2));
       }
@@ -29,7 +28,6 @@ export default function App() {
       await AsyncStorage.setItem("todos", JSON.stringify(todos));
     };
     storeTodos();
-    console.log("done");
   }, [todos]);
 
   const handleCheck = (id) => {
@@ -41,6 +39,10 @@ export default function App() {
   const handleAdd = (title) => {
     const id = todos.sort((t1, t2) => t1.id <= t2.id)[0].id + 1;
     setTodos([{ id, completed: false, title, userId: 1 }, ...todos]);
+  };
+
+  const handleEdit = (id, title) => {
+    setTodos(todos.map((t) => (t.id === id ? { ...t, title } : t)));
   };
 
   const handleDelete = (id) => {
@@ -59,6 +61,7 @@ export default function App() {
             todos={todos}
             handleCheck={handleCheck}
             handleDelete={handleDelete}
+            handleEdit={handleEdit}
             setTodos={setTodos}
             title={item.title}
             isCompleted={item.completed}

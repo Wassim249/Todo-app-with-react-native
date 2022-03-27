@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 
-const EditTodo = ({ pressed, setPressed, handleEdit, id , oldTitle }) => {
+const EditTodo = ({ setPressed, handleEdit, id , oldTitle }) => {
 const oldTitle1 = oldTitle
   const [title, setTitle] = useState(oldTitle);
   return (
@@ -26,7 +26,7 @@ const oldTitle1 = oldTitle
           setPressed(false);
         }}
       >
-        <Text style={styles.editButtonText}>done</Text>
+        <Text style={styles.editButtonText}>✓</Text>
       </TouchableOpacity>
     </View>
   );
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   editButton: {
     backgroundColor: "green",
     borderRadius: 5,
-    padding: 5,
+    padding: 8,
   },
   editButtonText: {
     color: "white",

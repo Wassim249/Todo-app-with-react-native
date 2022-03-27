@@ -1,11 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Alert,
-  View,
-  TextInput,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, Alert, View } from "react-native";
 import React, { useState } from "react";
 import Checkbox from "expo-checkbox";
 import EditTodo from "./EditTodo";
@@ -21,8 +14,23 @@ const Todo = ({
   const [checked, setChecked] = useState(isCompleted);
   const [pressed, setPressed] = useState(false);
 
+  const showDialog = () => {
+    Alert.alert("Confirmation", "Vous voulez vraiment supprimé ce todo", [
+      {
+        text: "Annuler",
+      },
+      {
+        text: "OK",
+        onPress: () => {
+          handleDelete(id);
+        },
+      },
+    ]);
+  };
+
   return (
     <View style={styles.todoContainer}>
+      {/* checkbox */}
       <View style={{ ...styles.container, ...styles.checkboxContainer }}>
         <Checkbox
           style={styles.checkbox}
@@ -34,20 +42,12 @@ const Todo = ({
           }}
         />
       </View>
+      {/* **************************************** */}
 
+      {/* titre */}
       <TouchableOpacity
         onLongPress={() => {
-          Alert.alert("Confirmation", "Vous voulez vraiment supprimé ce todo", [
-            {
-              text: "Annuler",
-            },
-            {
-              text: "OK",
-              onPress: () => {
-                handleDelete(id);
-              },
-            },
-          ]);
+          showDialog();
         }}
         onPress={() => {
           setPressed(true);
@@ -66,6 +66,7 @@ const Todo = ({
           <Text style={styles.title}>{title}</Text>
         )}
       </TouchableOpacity>
+      {/* /********************************************* */}
     </View>
   );
 };

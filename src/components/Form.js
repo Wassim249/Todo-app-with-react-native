@@ -1,31 +1,34 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, View, TextInput, Button } from "react-native";
+import { useState } from "react";
 
 const Form = ({ handleAdd }) => {
   const [title, setTitle] = useState("");
+
   return (
     <View style={styles.container}>
+      {/* le saisie de text pour le titre */}
       <TextInput
         onChangeText={(e) => {
           setTitle(e);
         }}
         placeholder="ajouter une todo"
+        value={title}
         style={styles.textinput}
       />
-      <TouchableOpacity
+      {/**************************************************** */}
+
+      {/* Button Ajouter  */}
+      <Button
         onPress={() => {
+          setTitle("");
           handleAdd(title);
         }}
-        style={styles.addButton}
-      >
-        <Text style={styles.buttonText}>+</Text>
-      </TouchableOpacity>
+        color="#22c55e"
+        style={{ ...styles.addButton, ...styles.buttonText }}
+        title="+"
+        accessibilityLabel="Ajouter une todo"
+      />
+      {/************************************************************************** */}
     </View>
   );
 };
@@ -46,16 +49,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   addButton: {
-    backgroundColor: "#22c55e",
-    paddingHorizontal: 30,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 5,
+    padding: 30,
+    marginLeft: 10,
     borderRadius: 10,
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 50,
     fontWeight: "bold",
     color: "white",
   },

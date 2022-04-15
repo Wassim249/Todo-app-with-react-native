@@ -7,21 +7,25 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 
-const Register = () => {
-  const [erroText, setErroText] = useState("");
+const Register = ({route , navigation}) => {
+  const [error, setErrorText] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConf, setPasswordConf] = useState("");
 
   const handleRegister = () => {
-    if (username === "") setErroText("Veuillez entrer un nom d'utilisateur");
-    else if (password === "") setErroText("Veuillez entrer un mot de passe");
+    console.log(username, password, passwordConf);
+    if (username === "") setErrorText("Veuillez entrer un nom d'utilisateur");
+    else if (password === "") setErrorText("Veuillez entrer un mot de passe");
     else if (password !== passwordConf)
-      setErroText("Les mots de passe ne correspondent pas");
-    else setErroText("");
+      setErrorText("Les mots de passe ne correspondent pas");
+    else {
+      setErrorText("");
+      navigation.navigate("Home", {user: username});
+    } 
   };
 
   return (
@@ -29,20 +33,22 @@ const Register = () => {
       <StatusBar style="auto" />
       <ScrollView>
         <View style={styles.container}>
-          {erroText !== "" && (
+          <Text style={styles.registerLabel}>Register</Text>
+          {error != "" && (
             <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{erroText}</Text>
+              <Text style={styles.error}>{error}</Text>
             </View>
           )}
-          <Text>Register</Text>
           <TextInput
             style={styles.textinput}
+            onChangeText={(text) => setUsername(text)}
             placeholder="Nom d'utilisateur"
             autoCapitalize="none"
             autoCorrect={false}
           />
           <TextInput
             style={styles.textinput}
+            onChangeText={(text) => setPassword(text)}
             placeholder="Mot de passe"
             secureTextEntry={true}
             autoCapitalize="none"
@@ -50,15 +56,23 @@ const Register = () => {
           />
           <TextInput
             style={styles.textinput}
+            onChangeText={(text) => setPasswordConf(text)}
             placeholder="Resaisir votre Mot de passe"
             secureTextEntry={true}
             autoCapitalize="none"
             autoCorrect={false}
           />
-          <TouchableOpacity style={styles.registerButton}>
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={handleRegister}
+          >
             <Text style={styles.registerText}>Register</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleRegister()}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Login");
+            }}
+          >
             <Text style={styles.loginText}>S'identifier</Text>
           </TouchableOpacity>
         </View>
@@ -77,13 +91,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   errorContainer: {
-    backgroundColor: "#f00",
+    backgroundColor: "red",
+    width: "80%",
     padding: 10,
     marginBottom: 10,
+    borderRadius: 10,
   },
-  errorText: {
+  error: {
     color: "#fff",
     textAlign: "center",
+  },
+  registerLabel: {
+    fontSize: 50,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "#22c55e",
   },
   textinput: {
     width: "80%",
@@ -94,14 +116,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   registerButton: {
-    backgroundColor: "#000",
+    backgroundColor: "#22c55e",
     padding: 10,
+    width: "80%",
     borderRadius: 10,
     marginBottom: 10,
   },
   registerText: {
     color: "#fff",
     textAlign: "center",
+  },
+  loginText: {
+    color: "#22c55e",
+    textAlign: "center",
+    textDecorationLine: "underline",
   },
   loginText: {
     color: "#000",

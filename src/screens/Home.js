@@ -1,12 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Text } from "react-native";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Todo from "./../components/Todo";
 import Form from "./../components/Form";
+import { TouchableOpacity } from "react-native-web";
 
-export default function Home() {
+export default function Home({ navigation, route }) {
   // lien Vers l'api jsonplaceholder
   const API_URL = "https://jsonplaceholder.typicode.com/todos/";
 
@@ -73,6 +74,32 @@ export default function Home() {
     <View style={styles.container}>
       <StatusBar style="auto" />
       {/* un Composant personalisé responsable de l'ajout un todo */}
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            marginBottom: 20,
+            color: "#22c55e",
+          }}
+        >
+          Bonjour {route.params.user},
+        </Text>
+
+        <TouchableOpacity
+        onPress={() => navigation.navigate("Login")}
+        >
+          <Text>Se déconnecter</Text>
+        </TouchableOpacity>
+      </View>
+
       <Form handleAdd={handleAdd} />
       <FlatList
         data={todos}

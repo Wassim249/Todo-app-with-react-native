@@ -1,17 +1,17 @@
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
+import tailwind from "twrnc";
 
 const EditTodo = ({ setPressed, handleEdit, id , oldTitle }) => {
 const oldTitle1 = oldTitle
   const [title, setTitle] = useState(oldTitle);
   return (
-    <View style={styles.container}>
+    <View style={tailwind`flex flex-row justify-between items-center w-11/12`}>
       <TextInput
       defaultValue={oldTitle1}
         onChangeText={(text) => {
@@ -20,34 +20,16 @@ const oldTitle1 = oldTitle
         placeholder="Modifier cette todo"
       />
       <TouchableOpacity
-        style={styles.editButton}
+        style={tailwind`bg-cyan-500 px-4 py-2 rounded-lg`}
         onPress={() => {
           title.length != 0 && handleEdit(id, title);
           setPressed(false);
         }}
       >
-        <Text style={styles.editButtonText}>✓</Text>
+        <Text style={tailwind`text-white`}>✓</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 export default EditTodo;
-
-const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-  },
-  editButton: {
-    backgroundColor: "green",
-    borderRadius: 5,
-    padding: 8,
-  },
-  editButtonText: {
-    color: "white",
-  },
-});

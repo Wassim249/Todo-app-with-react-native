@@ -1,61 +1,39 @@
-import { StyleSheet, View, TextInput, Button } from "react-native";
+import { View, TextInput, TouchableOpacity , Text } from "react-native";
 import { useState } from "react";
+import tailwind from "twrnc";
 
 const Form = ({ handleAdd }) => {
   const [title, setTitle] = useState("");
 
   return (
-    <View style={styles.container}>
-      {/* le saisie de text pour le titre */}
+    <View style={tailwind`flex flex-row py-5`}>
       <TextInput
         onChangeText={(e) => {
           setTitle(e);
         }}
         placeholder="ajouter une todo"
         value={title}
-        style={styles.textinput}
+        style={tailwind`bg-slate-100 grow-1 p-5 rounded-lg`}
       />
       {/**************************************************** */}
 
-      {/* Button Ajouter  */}
-      <Button
-        onPress={() => {
-          setTitle("");
-          handleAdd(title);
-        }}
-        color="#22c55e"
-        style={{ ...styles.addButton, ...styles.buttonText }}
-        title="+"
-        accessibilityLabel="Ajouter une todo"
-      />
+      <TouchableOpacity
+      style={tailwind`ml-2 bg-cyan-500 px-4 py-2 rounded-lg w-16 flex flex-row justify-center items-center`}
+       onPress={() => {
+        setTitle("");
+        handleAdd(title);
+      }}
+      >
+        <Text
+        style={tailwind`text-white text-xl font-bold `}
+        >
+          +
+        </Text>
+      </TouchableOpacity>
+     
       {/************************************************************************** */}
     </View>
   );
 };
 
 export default Form;
-
-const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "row",
-    paddingVertical: 20,
-  },
-
-  textinput: {
-    backgroundColor: "#e2e8f0",
-    flexGrow: 1,
-    padding: 20,
-    borderRadius: 10,
-  },
-  addButton: {
-    padding: 30,
-    marginLeft: 10,
-    borderRadius: 10,
-  },
-  buttonText: {
-    fontSize: 50,
-    fontWeight: "bold",
-    color: "white",
-  },
-});

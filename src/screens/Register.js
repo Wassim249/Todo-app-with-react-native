@@ -1,7 +1,6 @@
 import {
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -13,8 +12,9 @@ import { UserContext } from "../contexts/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import config from "../utils/config";
+import tailwind from "twrnc";
 
-const Register = ({ route, navigation }) => {
+const Register = ({ navigation }) => {
   const [error, setErrorText] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -28,69 +28,69 @@ const Register = ({ route, navigation }) => {
     else if (password !== passwordConf)
       setErrorText("Les mots de passe ne correspondent pas");
     else {
-      //register with axios
-      await register();
-    }
-  };
+      try {
+        const { data } = await axios.post(
+          config.SERVER_URL + "/auth/register",
+          {
+            username,
+            password,
+          }
+        );
+        if (data.success) {
+          setUser(data.user);
 
-  const register = async () => {
-    try {
-      console.log("register");
-      const { data } = await axios.post(config.SERVER_URL + "/auth/register", {
-        username,
-        password,
-      });
-      if (data.success) {
-        setUser(data.user);
-        navigation.navigate("Home");
-      } else {
-        setErrorText(data.message);
+          await AsyncStorage.setItem(
+            "user",
+            JSON.stringify({
+              username,
+              password,
+              isAuth: true,
+            })
+          );
+
+          setUser({
+            username,
+            password,
+          });
+
+          navigation.navigate("Home");
+        } else {
+          setErrorText(data.message);
+        }
+      } catch (error) {
+        console.log(error);
+        setErrorText("Erreur lors de l'enregistrement");
       }
-    } catch (error) {
-      console.log(error);
-      setErrorText("Erreur lors de l'enregistrement");
-    }
-  };
-
-  const storeUser = async () => {
-    try {
-      await AsyncStorage.setItem(
-        "user",
-        JSON.stringify({
-          username,
-          password,
-        })
-      );
-
-      setUser({
-        username,
-        password,
-      });
-    } catch (error) {
-      console.log(error);
     }
   };
 
   return (
     <SafeAreaView>
       <StatusBar style="auto" />
-      <ScrollView style={{ height: "100%", backgroundColor: "white" }}>
-        <View style={styles.container}>
-          <Text style={styles.registerLabel}>Inscription</Text>
+      <ScrollView style={tailwind`h-full bg-white`}>
+        <View
+          style={tailwind`mt-10 flex flex-col items-center justify-center bg-white`}
+        >
+          <Text
+            style={tailwind`text-4xl font-bold my-10 text-sky-500 text-left `}
+          >
+            Créer un compte
+          </Text>
+
           {error != "" && (
-            <View style={styles.errorContainer}>
-              <Text style={styles.error}>{error}</Text>
+            <View style={tailwind`bg-red-300 w-4/5 p-5 mb-5 rounded-lg`}>
+              <Text style={tailwind`text-slate-900 text-center`}>{error}</Text>
             </View>
           )}
           <TextInput
-            style={styles.textinput}
+            style={textsInputStyle}
             onChangeText={(text) => setUsername(text)}
             placeholder="Nom d'utilisateur"
             autoCapitalize="none"
             autoCorrect={false}
           />
           <TextInput
-            style={styles.textinput}
+            style={textsInputStyle}
             onChangeText={(text) => setPassword(text)}
             placeholder="Mot de passe"
             secureTextEntry={true}
@@ -98,32 +98,26 @@ const Register = ({ route, navigation }) => {
             autoCorrect={false}
           />
           <TextInput
-            style={styles.textinput}
+            style={textsInputStyle}
             onChangeText={(text) => setPasswordConf(text)}
             placeholder="Resaisir votre Mot de passe"
             secureTextEntry={true}
             autoCapitalize="none"
             autoCorrect={false}
           />
+
           <TouchableOpacity
-            style={styles.registerButton}
+            style={tailwind`bg-cyan-500 w-4/5 p-5 rounded-lg `}
             onPress={handleRegister}
           >
-            <Text style={styles.registerText}>S'inscrire</Text>
+            <Text style={tailwind`text-white text-center`}>S'inscrire</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Login");
-            }}
-          >
+          <TouchableOpacity>
             <Text
-              style={{
-                color: "#22c55e",
-                textAlign: "center",
-                textDecorationLine: "underline",
-              }}
+              style={tailwind`text-slate-900 text-center mt-5 underline`}
+              onPress={() => navigation.navigate("Login")}
             >
-              S'identifier
+              Déjà inscrit ?
             </Text>
           </TouchableOpacity>
         </View>
@@ -134,50 +128,4 @@ const Register = ({ route, navigation }) => {
 
 export default Register;
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: "10%",
-    flex: 1,
-    height: "100%",
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  errorContainer: {
-    backgroundColor: "red",
-    width: "80%",
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  error: {
-    color: "#fff",
-    textAlign: "center",
-  },
-  registerLabel: {
-    fontSize: 50,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#22c55e",
-  },
-  textinput: {
-    width: "80%",
-    borderColor: "#000",
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  registerButton: {
-    backgroundColor: "#22c55e",
-    padding: 10,
-    width: "80%",
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  registerText: {
-    color: "#fff",
-    textAlign: "center",
-  },
-
-});
+const textsInputStyle = tailwind`w-4/5 border border-gray-400 p-5 rounded-lg bg-gray-50 mb-5 `;

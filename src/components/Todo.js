@@ -2,6 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, Alert, View } from "react-native";
 import React, { useState } from "react";
 import Checkbox from "expo-checkbox";
 import EditTodo from "./EditTodo";
+import tailwind from "twrnc";
 
 const Todo = ({
   id,
@@ -29,13 +30,11 @@ const Todo = ({
   };
 
   return (
-    <View style={styles.todoContainer}>
-      {/* checkbox */}
-      <View style={{ ...styles.container, ...styles.checkboxContainer }}>
+    <View style={tailwind`flex flex-row`}>
+      <View style={tailwind`mb-5 bg-white py-10 rounded-lg flex flex-row justify-center items-center px-5 bg-slate-100`}>
         <Checkbox
-          style={styles.checkbox}
           value={checked}
-          color="#22c55e"
+          color="#06B6D4"
           onValueChange={() => {
             setChecked(!checked);
             handleCheck(id);
@@ -44,7 +43,6 @@ const Todo = ({
       </View>
       {/* **************************************** */}
 
-      {/* titre */}
       <TouchableOpacity
         onLongPress={() => {
           showDialog();
@@ -52,7 +50,7 @@ const Todo = ({
         onPress={() => {
           setPressed(true);
         }}
-        style={{ ...styles.container, ...styles.textContainer }}
+        style={tailwind`ml-3 grow-1 mb-5 bg-white py-10 rounded-lg flex flex-row justify-start items-center px-5 bg-slate-100`}
       >
         {pressed ? (
           <EditTodo
@@ -63,7 +61,7 @@ const Todo = ({
             id={id}
           />
         ) : (
-          <Text style={styles.title}>{title}</Text>
+          <Text style={tailwind`font-bold text-slate-900`}>{title}</Text>
         )}
       </TouchableOpacity>
       {/* /********************************************* */}
@@ -72,36 +70,3 @@ const Todo = ({
 };
 
 export default Todo;
-
-const styles = StyleSheet.create({
-  todoContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  container: {
-    marginBottom: 20,
-    backgroundColor: "#e2e8f0",
-    paddingVertical: 30,
-    borderRadius: 10,
-  },
-  textContainer: {
-    paddingHorizontal: 10,
-    marginLeft: 10,
-    flexGrow: 1,
-  },
-
-  checkboxContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  checkbox: {
-    marginRight: 10,
-  },
-  title: {
-    fontSize: 13,
-    fontWeight: "bold",
-    color: "black",
-  },
-});

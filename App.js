@@ -12,29 +12,31 @@ export default function App() {
 
   const [user, setUser] = useState(null);
 
-  const getUser = async () => {
-    try {
-      const loadedUser = JSON.parse(await AsyncStorage.getItem("user"));
-      setUser(loadedUser);
-        
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
 
   useEffect(() => {
+    const getUser = async () => {
+      try {
+        const loadedUser = JSON.parse(await AsyncStorage.getItem("user"));
+        console.log("loadedUser", loadedUser);
+        setUser(loadedUser);
+          
+      } catch (error) {
+        console.log(error);
+      }
+    };
     getUser();
   }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={user ? "Home" : "Register"}>
+        <Stack.Navigator initialRouteName={user && user.isAuth ? "Home" : "Register"}>
           <Stack.Screen
             name="Home"
             component={Home}
             options={{
-              headerShown: false,
+              headerShown: false,            
             }}
           />
           <Stack.Screen

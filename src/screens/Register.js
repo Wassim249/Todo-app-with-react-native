@@ -7,33 +7,76 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
+import { UserContext } from "../contexts/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import config from "../utils/config";
 
-const Register = ({route , navigation}) => {
+const Register = ({ route, navigation }) => {
   const [error, setErrorText] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConf, setPasswordConf] = useState("");
 
-  const handleRegister = () => {
-    console.log(username, password, passwordConf);
+  const { user, setUser } = useContext(UserContext);
+
+  const handleRegister = async () => {
     if (username === "") setErrorText("Veuillez entrer un nom d'utilisateur");
     else if (password === "") setErrorText("Veuillez entrer un mot de passe");
     else if (password !== passwordConf)
       setErrorText("Les mots de passe ne correspondent pas");
     else {
-      setErrorText("");
-      navigation.navigate("Home", {user: username});
-    } 
+      //register with axios
+      await register();
+    }
+  };
+
+  const register = async () => {
+    try {
+      console.log("register");
+      const { data } = await axios.post(config.SERVER_URL + "/auth/register", {
+        username,
+        password,
+      });
+      if (data.success) {
+        setUser(data.user);
+        navigation.navigate("Home");
+      } else {
+        setErrorText(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorText("Erreur lors de l'enregistrement");
+    }
+  };
+
+  const storeUser = async () => {
+    try {
+      await AsyncStorage.setItem(
+        "user",
+        JSON.stringify({
+          username,
+          password,
+        })
+      );
+
+      setUser({
+        username,
+        password,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <SafeAreaView>
       <StatusBar style="auto" />
-      <ScrollView>
+      <ScrollView style={{ height: "100%", backgroundColor: "white" }}>
         <View style={styles.container}>
-          <Text style={styles.registerLabel}>Register</Text>
+          <Text style={styles.registerLabel}>Inscription</Text>
           {error != "" && (
             <View style={styles.errorContainer}>
               <Text style={styles.error}>{error}</Text>
@@ -66,14 +109,22 @@ const Register = ({route , navigation}) => {
             style={styles.registerButton}
             onPress={handleRegister}
           >
-            <Text style={styles.registerText}>Register</Text>
+            <Text style={styles.registerText}>S'inscrire</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("Login");
             }}
           >
-            <Text style={styles.loginText}>S'identifier</Text>
+            <Text
+              style={{
+                color: "#22c55e",
+                textAlign: "center",
+                textDecorationLine: "underline",
+              }}
+            >
+              S'identifier
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -85,7 +136,9 @@ export default Register;
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: "10%",
     flex: 1,
+    height: "100%",
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
@@ -126,13 +179,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
   },
-  loginText: {
-    color: "#22c55e",
-    textAlign: "center",
-    textDecorationLine: "underline",
-  },
-  loginText: {
-    color: "#000",
-    textAlign: "center",
-  },
+
 });

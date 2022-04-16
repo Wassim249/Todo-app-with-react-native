@@ -8,31 +8,49 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
+import axios from "axios";
+import { UserContext } from "../contexts/UserContext";
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = () => {
+  const { user, setUser } = useContext(UserContext);
+
+  const handleLogin = async () => {
     if (userName.trim() === "" || password.trim() === "") {
       setError("All fields are required");
     } else {
-      setError("");
-      navigation.navigate("Home" , {
-        user : userName,}
-        );
+     await login();
+    }
+  };
+
+  const login = async () => {
+    try {
+      const { data } = await axios.post(config.SERVER_URL + "/auth/login", {
+        username: userName,
+        password,
+      });
+      if (data.success) {
+        setUser(data.user);
+        navigation.navigate("Home");
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return (
     <SafeAreaView>
       <StatusBar style="auto" />
-      <ScrollView>
+      <ScrollView style={{backgroundColor : 'white' , height : '100%'}}>
         <View style={styles.container}>
-          <Text style={styles.loginLabel}>Login</Text>
+          <Text style={styles.loginLabel}>Indentification</Text>
           {error !== "" && (
             <View
               style={{
@@ -62,11 +80,9 @@ const Login = ({navigation}) => {
             autoCorrect={false}
           />
           <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginText}>Login</Text>
+            <Text style={styles.loginText}>S'identifier</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-          onPress={() => navigation.navigate("Register")}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
             <Text style={styles.registerText}>Créér un compte</Text>
           </TouchableOpacity>
         </View>
@@ -80,8 +96,8 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: Dimensions.get("window").height,
-    width:Dimensions.get("window").width,
+    height: "100%",
+    marginTop :  '10%',
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
@@ -94,9 +110,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
-  error : {
+  error: {
     color: "white",
-  } ,
+  },
   loginButton: {
     width: "80%",
     backgroundColor: "#22c55e",
@@ -106,14 +122,14 @@ const styles = StyleSheet.create({
   },
   loginText: {
     color: "#fff",
-    fontWeight : "bold",
+    fontWeight: "bold",
     textAlign: "center",
   },
   loginLabel: {
-    fontSize: 50,
+    fontSize: 40,
     fontWeight: "bold",
     marginBottom: 20,
-    color : "#22c55e"
+    color: "#22c55e",
   },
   registerText: {
     color: "#22c55e",
